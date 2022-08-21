@@ -1,17 +1,47 @@
 service: gatam-gym-api
 frameworkVersion: "3"
 
+custom:
+  workoutsTable: workoutsTable
+
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+      Resource:
+        Fn::GetAtt:
+          - workoutsTable
+          - Arn
+  environment:
+    AWS_DEPLOY_REGION: "us-east-1"
+    WORKOUT_TABLE: ${self:custom.workoutsTable}
 
 functions:
-  hello:
-    handler: handler.hello
+  createWorkout:
+    handler: src/handlers/workouts.createWorkout
     events:
       - httpApi:
           method: POST
           path: /workouts
+
+resources:
+  Resources:
+    workoutsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.workoutsTable}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
 
 plugins:
   - serverless-offline
