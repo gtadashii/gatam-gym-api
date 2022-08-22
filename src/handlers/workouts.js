@@ -1,7 +1,8 @@
 'use strict'
-const { getErrorFromException } = require('../factory/exceptions')
+const { getErrorFromException } = require('../factory/errorException')
 const { response } = require('../factory/httpFactory')
 const workoutService = require('../services/workout.service')
+const validation = require('../validations')
 
 /*
   path: /workouts
@@ -10,6 +11,7 @@ const workoutService = require('../services/workout.service')
 const createWorkout = async (event) => {
   try {
     const data = JSON.parse(event.body)
+    await validation.workout(data)
     const workout = await workoutService.create(data)
     return response(workout, 200)
   } catch (err) {
