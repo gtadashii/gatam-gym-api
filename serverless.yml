@@ -13,6 +13,9 @@ provider:
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:DeleteItem
       Resource:
         Fn::GetAtt:
           - workoutsTable
@@ -28,6 +31,30 @@ functions:
       - httpApi:
           method: POST
           path: /workouts
+  listWorkouts:
+    handler: src/handlers/workouts.listWorkouts
+    events:
+      - httpApi:
+          method: GET
+          path: /workouts
+  getWorkout:
+    handler: src/handlers/workouts.getWorkout
+    events:
+      - httpApi:
+          method: GET
+          path: /workouts/{id}
+  updateWorkout:
+    handler: src/handlers/workouts.updateWorkout
+    events:
+      - httpApi:
+          method: PUT
+          path: /workouts/{id}
+  deleteWorkout:
+    handler: src/handlers/workouts.deleteWorkout
+    events:
+      - httpApi:
+          method: DELETE
+          path: /workouts/{id}
 
 resources:
   Resources:

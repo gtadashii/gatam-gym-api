@@ -22,25 +22,60 @@ const createWorkout = async (event) => {
   path: /workouts
   method: GET
 */
-const listWorkouts = async () => {}
+const listWorkouts = async (event) => {
+  try {
+    const workouts = await workoutService.list()
+    return response(workouts, 200)
+  } catch (err) {
+    console.error(err)
+    return getErrorFromException(err, 'Error while retrieving workouts, try again later')
+  }
+}
 
 /*
   path: /workouts/{id}
   method: GET
 */
-const getWorkout = async () => {}
+const getWorkout = async (event) => {
+  try {
+    const { id } = event.pathParameters
+    const workout = await workoutService.get(id)
+    return workout
+  } catch (err) {
+    console.error(err)
+    return getErrorFromException(err, 'Error while retrieving workout, try again later')
+  }
+}
 
 /*
   path: /workouts/{id}
   method: PUT
 */
-const updateWorkout = async () => {}
+const updateWorkout = async (event) => {
+  try {
+    const { id } = event.pathParameters
+    const { name, exercises } = JSON.parse(event.body)
+    const updated = await workoutService.update(id, { name, exercises })
+    return response(updated, 200)
+  } catch (err) {
+    console.error(err)
+    return getErrorFromException(err, 'Error while updating workout, try again later')
+  }
+}
 
 /*
   path: /workouts/{id}
   method: DELETE
 */
-const deleteWorkout = async () => {}
+const deleteWorkout = async (event) => {
+  try {
+    const { id } = event.pathParameters
+    await workoutService.delete(id)
+  } catch (err) {
+    console.error(err)
+    return getErrorFromException(err, 'Error while deleting workout, try again later')
+  }
+}
 
 module.exports = {
   createWorkout,
