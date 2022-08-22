@@ -27,7 +27,11 @@ class WorkoutService {
     const params = {
       TableName: process.env.WORKOUT_TABLE,
       Key: { id },
-      UpdateExpression: 'set name = :name, exercises = :exercises',
+      UpdateExpression: 'set #name = :name, #exercises = :exercises',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+        '#exercises': 'exercises'
+      },
       ExpressionAttributeValues: {
         ':name': data.name,
         ':exercises': data.exercises
