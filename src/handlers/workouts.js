@@ -57,6 +57,7 @@ const updateWorkout = async (event) => {
   try {
     const { id } = event.pathParameters
     const { name, exercises } = JSON.parse(event.body)
+    await validation.workout({ name, exercises })
     const updated = await workoutService.update(id, { name, exercises })
     return response(updated, 200)
   } catch (err) {
