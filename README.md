@@ -24,4 +24,4 @@ Sistema para gerenciamento de academias.
 
 ### Front-end
 
-- Bootstrap
+- React + React-Bootstrap
