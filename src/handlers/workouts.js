@@ -42,7 +42,7 @@ const getWorkout = async (event) => {
   try {
     const { id } = event.pathParameters
     const workout = await workoutService.get(id)
-    return workout
+    return response(workout, 200)
   } catch (err) {
     console.error(err)
     return getErrorFromException(err, 'Error while retrieving workout, try again later')
@@ -74,6 +74,7 @@ const deleteWorkout = async (event) => {
   try {
     const { id } = event.pathParameters
     await workoutService.delete(id)
+    return response({}, 200)
   } catch (err) {
     console.error(err)
     return getErrorFromException(err, 'Error while deleting workout, try again later')
