@@ -1,0 +1,202 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+      "title":"GATAM Gym API",
+      "description": "API for the GATAM project backend",
+      "version":"1.0"
+    },
+    "tags": [ "workouts" ],
+    "paths": {
+      "/workouts": {
+        "get": {
+          "description": "Returns all workouts from the system",
+          "tags": [ "workouts" ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Workouts"
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        },
+        "post": {
+          "description": "Creates a workout",
+          "tags": [ "workouts" ],
+          "produces": "application/json",
+          "parameters": [
+            {
+              "name": "workout",
+              "in": "body",
+              "description": "Workout to add",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/NewWorkout"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Workout"
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      },
+      "/workouts/{id}": {
+        "get": {
+          "description": "Returns a workouts by its id",
+          "tags": [ "workouts" ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "workout id",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "$ref": "#/definitions/Workout"
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        },
+        "put": {
+          "description": "Updates an existing workout",
+          "tags": [ "workouts" ],
+          "produces": [ "application/json" ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Workout id",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "Workout",
+              "in": "body",
+              "description": "Workout data to be updated",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/NewWorkout"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Workouts"
+                }
+              }
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        },
+        "delete": {
+          "description": "Delete an workout by its id",
+          "tags": [ "workouts" ],
+          "produces": [ "application/json" ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "schema": {}
+            },
+            "500": {
+              "description": "Internal Server Error"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Workout": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions/NewWorkout"
+          },
+          {
+            "required": [ "id" ],
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "Workouts": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/definitions/NewWorkout"
+          },
+          {
+            "required": [ "id" ],
+            "properties": {
+              "id": { "type": "string" }
+            }
+          }
+        ]
+      },
+      "NewWorkout": {
+        "type": "object",
+        "required": [ "name", "exercises" ],
+        "properties": {
+          "name": { "type": "string" },
+          "exercises": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [ "name", "repetitions" ],
+              "properties": {
+                "name": { "type": "string" },
+                "repetitions": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
