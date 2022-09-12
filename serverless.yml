@@ -23,6 +23,7 @@ provider:
   environment:
     AWS_DEPLOY_REGION: "us-east-1"
     WORKOUT_TABLE: ${self:custom.workoutsTable}
+  versionFunctions: false
 
 functions:
   createWorkout:
