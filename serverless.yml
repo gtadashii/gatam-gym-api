@@ -3,6 +3,7 @@ frameworkVersion: "3"
 
 custom:
   workoutsTable: workoutsTable
+  usersTable: gatam-usersTable
 
 provider:
   name: aws
@@ -17,12 +18,13 @@ provider:
         - dynamodb:Query
         - dynamodb:DeleteItem
       Resource:
-        Fn::GetAtt:
-          - workoutsTable
-          - Arn
+        - { "Fn::GetAtt": ["workoutsTable", "Arn"] }
+        - { "Fn::GetAtt": ["usersTable", "Arn"] }
   environment:
     AWS_DEPLOY_REGION: "us-east-1"
     WORKOUT_TABLE: ${self:custom.workoutsTable}
+    USERS_TABLE: ${self:custom.usersTable}
+    JWT_SECRET: asldfhasodifjapsojf
   versionFunctions: false
 
 functions:
@@ -56,6 +58,24 @@ functions:
       - httpApi:
           method: DELETE
           path: /workouts/{id}
+  authRegister:
+    handler: src/handlers/authentication.register
+    events:
+      - httpApi:
+          method: POST
+          path: /auth/register
+  authVerify:
+    handler: src/handlers/authentication.verify
+    events:
+      - httpApi:
+          method: POST
+          path: /auth/verify
+  authLogin:
+    handler: src/handlers/authentication.login
+    events:
+      - httpApi:
+          method: POST
+          path: /auth/login
 
 resources:
   Resources:
@@ -69,6 +89,26 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.usersTable}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: user-email
+            KeySchema:
+              - AttributeName: email
+                KeyType: HASH
+            Projection:
+              ProjectionType: "ALL"
         BillingMode: PAY_PER_REQUEST
 
 plugins:

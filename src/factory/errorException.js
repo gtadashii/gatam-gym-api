@@ -1,5 +1,12 @@
 const { response } = require('./httpFactory')
-const { ValidationException } = require('../utils/exceptions')
+const {
+  ValidationException,
+  UsersAlreadyExistsException,
+  UserDoesNotExistsException,
+  IncorrectPasswordException,
+  InvalidTokenException,
+  InvalidEmailException
+} = require('../utils/exceptions')
 
 const HTTP_ERROR_TYPE = {
   INTERNAL_SERVER_ERROR: 'Internal server error',
@@ -19,6 +26,41 @@ const getErrorFromException = (err, message) => {
     errorType = HTTP_ERROR_TYPE.BAD_REQUEST
     erroMessage = err.message
     errorCode = 400
+  }
+
+  if (err instanceof UsersAlreadyExistsException) {
+    console.log('erro: ', JSON.stringify(err))
+    errorType = HTTP_ERROR_TYPE.BAD_REQUEST
+    erroMessage = err.message
+    errorCode = 400
+  }
+
+  if (err instanceof UserDoesNotExistsException) {
+    console.log('erro: ', JSON.stringify(err))
+    errorType = HTTP_ERROR_TYPE.NOT_FOUND
+    erroMessage = err.message
+    errorCode = 404
+  }
+
+  if (err instanceof IncorrectPasswordException) {
+    console.log('erro: ', JSON.stringify(err))
+    errorType = HTTP_ERROR_TYPE.UNAUTHORIZED
+    erroMessage = err.message
+    errorCode = 403
+  }
+
+  if (err instanceof InvalidTokenException) {
+    console.log('erro: ', JSON.stringify(err))
+    errorType = HTTP_ERROR_TYPE.UNAUTHORIZED
+    erroMessage = err.message
+    errorCode = 403
+  }
+
+  if (err instanceof InvalidEmailException) {
+    console.log('erro: ', JSON.stringify(err))
+    errorType = HTTP_ERROR_TYPE.UNAUTHORIZED
+    erroMessage = err.message
+    errorCode = 403
   }
 
   const logMessage = errorCode === 500 ? `${message}, ${(err).message}` : erroMessage
