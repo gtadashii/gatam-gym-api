@@ -76,6 +76,30 @@ functions:
       - httpApi:
           method: POST
           path: /auth/login
+  listUsers:
+    handler: src/handlers/user.listUsers
+    events:
+      - httpApi:
+          method: GET
+          path: /users
+  getUser:
+    handler: src/handlers/user.getUser
+    events:
+      - httpApi:
+          method: GET
+          path: /users/{id}
+  updateUser:
+    handler: src/handlers/user.updateUser
+    events:
+      - httpApi:
+          method: PUT
+          path: /users/{id}
+  deleteUser:
+    handler: src/handlers/user.deleteUser
+    events:
+      - httpApi:
+          method: DELETE
+          path: /users/{id}
 
 resources:
   Resources:

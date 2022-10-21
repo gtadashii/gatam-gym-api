@@ -49,6 +49,41 @@ class UserService {
     if (user.Count === 0) return null;
     return user.Items[0];
   }
+
+  async listUsers() {
+    const params = {
+      TableName: process.env.USERS_TABLE,
+      Limit: 10
+    }
+    const results = await dynamo.scan(params).promise();
+    return results.Items
+  }
+
+  async updateUser(id, data) {
+    const params = {
+      TableName: process.env.USERS_TABLE,
+      Key: { id },
+      UpdateExpression: 'set #name = :name, #email = :email',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+        '#email': 'email'
+      },
+      ExpressionAttributeValues: {
+        ':name': data.name,
+        ':email': data.email
+      }
+    }
+    await dynamo.update(params).promise();
+    return { id, ...data }
+  }
+
+  async deleteUser(id) {
+    const params = {
+      TableName: process.env.USERS_TABLE,
+      Key: { id }
+    }
+    await dynamo.delete(params).promise()
+  }
 }
 
 module.exports = new UserService();
