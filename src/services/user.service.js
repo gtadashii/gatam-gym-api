@@ -26,8 +26,10 @@ class UserService {
       TableName: process.env.USERS_TABLE,
       Key: { id }
     }
-    const user = await dynamo.get(params).promise()
-    return user.Item
+    const result = await dynamo.get(params).promise()
+    const user = result.Item
+    const treatedUser = { name: user.name, email: user.email }
+    return treatedUser
   }
 
   async getByEmail(email) {
@@ -56,7 +58,11 @@ class UserService {
       Limit: 10
     }
     const results = await dynamo.scan(params).promise();
-    return results.Items
+    const users = results.Items
+    const treatedUsers = users.map(user => {
+      return { id: user.id, name: user.name, email: user.email }
+    })
+    return treatedUsers
   }
 
   async updateUser(id, data) {

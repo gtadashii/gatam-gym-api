@@ -57,6 +57,7 @@ const deleteUser = async (event) => {
   try {
     const { id } = event.pathParameters
     await userService.deleteUser(id);
+    return response({}, 200)
   } catch (err) {
     console.error(err)
     return getErrorFromException(err, 'Error while deleting user, try again later')
