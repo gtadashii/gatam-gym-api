@@ -30,8 +30,18 @@ const verifySchema = {
   })
 }
 
+const updateUserSchema = {
+  name: Joi.string().required().messages({
+    'any.required': 'É necessário informar o nome'
+  }),
+  email: Joi.string().required().messages({
+    'any.required': 'É necessário informar o e-mail'
+  })
+}
+
 const user = Joi.object(userSchema).pattern(/./, Joi.any());
 const login = Joi.object(loginSchema).pattern(/./, Joi.any());
 const verify = Joi.object(verifySchema).pattern(/./, Joi.any());
+const updateUser = Joi.object(updateUserSchema).pattern(/./, Joi.any());
 
-module.exports = { user, login, verify }
+module.exports = { user, login, verify, updateUser }

@@ -1,6 +1,8 @@
 const dynamo = require('./dynamo');
 const bcrypt = require('bcryptjs');
 const { v4: uuidV4 } = require('uuid');
+const { UserDoesNotExistsException } = require('../utils/exceptions');
+const validation = require('../validations/index')
 
 class UserService {
   async create(userInfo) {
@@ -26,8 +28,13 @@ class UserService {
       TableName: process.env.USERS_TABLE,
       Key: { id }
     }
-    const user = await dynamo.get(params).promise()
-    return user.Item
+    const result = await dynamo.get(params).promise()
+    const user = result.Item
+    if (!user) {
+      throw new UserDoesNotExistsException(`User of id ${id} not found`)
+    }
+    const treatedUser = { name: user.name, email: user.email }
+    return treatedUser
   }
 
   async getByEmail(email) {
@@ -48,6 +55,48 @@ class UserService {
     const user = await dynamo.query(params).promise();
     if (user.Count === 0) return null;
     return user.Items[0];
+  }
+
+  async listUsers() {
+    const params = {
+      TableName: process.env.USERS_TABLE,
+      Limit: 10
+    }
+    const results = await dynamo.scan(params).promise();
+    const users = results.Items
+    const treatedUsers = users.map(user => {
+      return { id: user.id, name: user.name, email: user.email }
+    })
+    return treatedUsers
+  }
+
+  async updateUser(id, data) {
+    await validation.updateUser(data)
+    await this.get(id)
+    const params = {
+      TableName: process.env.USERS_TABLE,
+      Key: { id },
+      UpdateExpression: 'set #name = :name, #email = :email',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+        '#email': 'email'
+      },
+      ExpressionAttributeValues: {
+        ':name': data.name,
+        ':email': data.email
+      }
+    }
+    await dynamo.update(params).promise();
+    return { id, ...data }
+  }
+
+  async deleteUser(id) {
+    await this.get(id)
+    const params = {
+      TableName: process.env.USERS_TABLE,
+      Key: { id }
+    }
+    await dynamo.delete(params).promise()
   }
 }
 

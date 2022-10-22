@@ -1,5 +1,6 @@
 const dynamo = require('./dynamo')
 const { v4: uuidv4 } = require('uuid')
+const { WorkoutDoesNotExistsException } = require('../utils/exceptions')
 
 class WorkoutService {
   async create (data) {
@@ -18,12 +19,17 @@ class WorkoutService {
       TableName: process.env.WORKOUT_TABLE,
       Key: { id }
     }
-    const workout = await dynamo.get(params).promise()
-    return workout.Item
+    const result = await dynamo.get(params).promise()
+    const workout = result.Item
+    if (!workout) {
+      throw new WorkoutDoesNotExistsException(`Workout of id ${id} not found`)
+    }
+    return workout
   }
 
   async update (id, data) {
     console.info(JSON.stringify(data))
+    await this.get(id)
     const params = {
       TableName: process.env.WORKOUT_TABLE,
       Key: { id },
@@ -55,6 +61,7 @@ class WorkoutService {
       TableName: process.env.WORKOUT_TABLE,
       Key: { id }
     }
+    await this.get(id)
     await dynamo.delete(params).promise()
   }
 }

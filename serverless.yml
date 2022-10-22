@@ -20,6 +20,7 @@ provider:
       Resource:
         - { "Fn::GetAtt": ["workoutsTable", "Arn"] }
         - { "Fn::GetAtt": ["usersTable", "Arn"] }
+        - arn:aws:dynamodb:us-east-1:191154310521:table/gatam-usersTable/index/user-email
   environment:
     AWS_DEPLOY_REGION: "us-east-1"
     WORKOUT_TABLE: ${self:custom.workoutsTable}
@@ -76,6 +77,30 @@ functions:
       - httpApi:
           method: POST
           path: /auth/login
+  listUsers:
+    handler: src/handlers/users.listUsers
+    events:
+      - httpApi:
+          method: GET
+          path: /users
+  getUser:
+    handler: src/handlers/users.getUser
+    events:
+      - httpApi:
+          method: GET
+          path: /users/{id}
+  updateUser:
+    handler: src/handlers/users.updateUser
+    events:
+      - httpApi:
+          method: PUT
+          path: /users/{id}
+  deleteUser:
+    handler: src/handlers/users.deleteUser
+    events:
+      - httpApi:
+          method: DELETE
+          path: /users/{id}
 
 resources:
   Resources:
