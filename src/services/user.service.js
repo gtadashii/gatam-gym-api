@@ -1,6 +1,7 @@
 const dynamo = require('./dynamo');
 const bcrypt = require('bcryptjs');
 const { v4: uuidV4 } = require('uuid');
+const { UserDoesNotExistsException } = require('../utils/exceptions');
 
 class UserService {
   async create(userInfo) {
@@ -28,6 +29,9 @@ class UserService {
     }
     const result = await dynamo.get(params).promise()
     const user = result.Item
+    if (!user) {
+      throw new UserDoesNotExistsException(`User of id ${id} not found`)
+    }
     const treatedUser = { name: user.name, email: user.email }
     return treatedUser
   }
@@ -66,6 +70,7 @@ class UserService {
   }
 
   async updateUser(id, data) {
+    await this.get(id)
     const params = {
       TableName: process.env.USERS_TABLE,
       Key: { id },
@@ -84,6 +89,7 @@ class UserService {
   }
 
   async deleteUser(id) {
+    await this.get(id)
     const params = {
       TableName: process.env.USERS_TABLE,
       Key: { id }

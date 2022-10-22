@@ -19,11 +19,12 @@ class WorkoutService {
       TableName: process.env.WORKOUT_TABLE,
       Key: { id }
     }
-    const workout = await dynamo.get(params).promise()
-    if (!workout.Item) {
+    const result = await dynamo.get(params).promise()
+    const workout = result.Item
+    if (!workout) {
       throw new WorkoutDoesNotExistsException(`Workout of id ${id} not found`)
     }
-    return workout.Item
+    return workout
   }
 
   async update (id, data) {
