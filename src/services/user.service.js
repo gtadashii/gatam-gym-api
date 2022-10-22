@@ -2,6 +2,7 @@ const dynamo = require('./dynamo');
 const bcrypt = require('bcryptjs');
 const { v4: uuidV4 } = require('uuid');
 const { UserDoesNotExistsException } = require('../utils/exceptions');
+const validation = require('../validations/index')
 
 class UserService {
   async create(userInfo) {
@@ -70,6 +71,7 @@ class UserService {
   }
 
   async updateUser(id, data) {
+    await validation.updateUser(data)
     await this.get(id)
     const params = {
       TableName: process.env.USERS_TABLE,

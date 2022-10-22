@@ -1,6 +1,6 @@
 const { workout } = require('./workout.validation')
 const { ValidationException } = require('../utils/exceptions')
-const { user, login, verify } = require('./user.validation')
+const { user, login, verify, updateUser } = require('./user.validation')
 
 class Validation {
   async workout (data) {
@@ -30,6 +30,14 @@ class Validation {
   async verify (data) {
     try {
       await verify.validateAsync(data, { abortEarly: false })
+    } catch (err) {
+      console.error(err)
+      throw new ValidationException(err)
+    }
+  }
+  async updateUser (data) {
+    try {
+      await updateUser.validateAsync(data, { abortEarly: false })
     } catch (err) {
       console.error(err)
       throw new ValidationException(err)

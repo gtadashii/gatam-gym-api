@@ -2,7 +2,6 @@
 const { getErrorFromException } = require('../factory/errorException')
 const { response } = require('../factory/httpFactory')
 const userService = require('../services/user.service')
-// const validation = require('../validations')
 
 /**
  * path: /users
@@ -42,7 +41,7 @@ const updateUser = async (event) => {
     const { id } = event.pathParameters
     const { name, email } = JSON.parse(event.body)
     const updatedUser = await userService.updateUser(id, { name, email })
-    return response(updateUser, 200)
+    return response(updatedUser, 200)
   } catch (err) {
     console.error(err)
     return getErrorFromException(err, 'Error while updating user, try again later')
