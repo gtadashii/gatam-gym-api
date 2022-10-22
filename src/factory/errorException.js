@@ -5,7 +5,8 @@ const {
   UserDoesNotExistsException,
   IncorrectPasswordException,
   InvalidTokenException,
-  InvalidEmailException
+  InvalidEmailException,
+  WorkoutDoesNotExistsException
 } = require('../utils/exceptions')
 
 const HTTP_ERROR_TYPE = {
@@ -61,6 +62,13 @@ const getErrorFromException = (err, message) => {
     errorType = HTTP_ERROR_TYPE.UNAUTHORIZED
     erroMessage = err.message
     errorCode = 403
+  }
+
+  if (err instanceof WorkoutDoesNotExistsException) {
+    console.error('erro: ', JSON.stringify(err))
+    errorType = HTTP_ERROR_TYPE.NOT_FOUND
+    erroMessage = err.message
+    errorCode = 404
   }
 
   const logMessage = errorCode === 500 ? `${message}, ${(err).message}` : erroMessage

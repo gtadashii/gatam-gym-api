@@ -34,11 +34,18 @@ class InvalidEmailException extends Error {
   }
 }
 
+class WorkoutDoesNotExistsException extends Error {
+  constructor (message) {
+    super(message)
+  }
+}
+
 module.exports = {
   ValidationException,
   UsersAlreadyExistsException,
   UserDoesNotExistsException,
   IncorrectPasswordException,
   InvalidTokenException,
-  InvalidEmailException
+  InvalidEmailException,
+  WorkoutDoesNotExistsException
 }
