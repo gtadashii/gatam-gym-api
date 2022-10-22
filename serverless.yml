@@ -20,6 +20,7 @@ provider:
       Resource:
         - { "Fn::GetAtt": ["workoutsTable", "Arn"] }
         - { "Fn::GetAtt": ["usersTable", "Arn"] }
+        - arn:aws:dynamodb:us-east-1:191154310521:table/gatam-usersTable/index/user-email
   environment:
     AWS_DEPLOY_REGION: "us-east-1"
     WORKOUT_TABLE: ${self:custom.workoutsTable}
