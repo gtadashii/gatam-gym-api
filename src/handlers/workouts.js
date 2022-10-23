@@ -3,6 +3,7 @@ const { getErrorFromException } = require('../factory/errorException')
 const { response } = require('../factory/httpFactory')
 const workoutService = require('../services/workout.service')
 const validation = require('../validations')
+const authorizer = require('../utils/authorizer')
 
 /*
   path: /workouts
@@ -10,6 +11,7 @@ const validation = require('../validations')
 */
 const createWorkout = async (event) => {
   try {
+    await authorizer.verify(event)
     const data = JSON.parse(event.body)
     await validation.workout(data)
     const workout = await workoutService.create(data)
@@ -26,6 +28,7 @@ const createWorkout = async (event) => {
 */
 const listWorkouts = async (event) => {
   try {
+    await authorizer.verify(event)
     const workouts = await workoutService.list()
     return response(workouts, 200)
   } catch (err) {
@@ -40,6 +43,7 @@ const listWorkouts = async (event) => {
 */
 const getWorkout = async (event) => {
   try {
+    await authorizer.verify(event)
     const { id } = event.pathParameters
     const workout = await workoutService.get(id)
     return response(workout, 200)
@@ -55,6 +59,7 @@ const getWorkout = async (event) => {
 */
 const updateWorkout = async (event) => {
   try {
+    await authorizer.verify(event)
     const { id } = event.pathParameters
     const { name, exercises } = JSON.parse(event.body)
     await validation.workout({ name, exercises })
@@ -72,6 +77,7 @@ const updateWorkout = async (event) => {
 */
 const deleteWorkout = async (event) => {
   try {
+    await authorizer.verify(event)
     const { id } = event.pathParameters
     await workoutService.delete(id)
     return response({}, 200)
