@@ -2,6 +2,7 @@
 const { getErrorFromException } = require('../factory/errorException')
 const { response } = require('../factory/httpFactory')
 const userService = require('../services/user.service')
+const authorizer = require('../utils/authorizer')
 
 /**
  * path: /users
@@ -9,6 +10,7 @@ const userService = require('../services/user.service')
  */
 const listUsers = async (event) => {
   try {
+    await authorizer.verify(event)
     const users = await userService.listUsers();
     return response(users, 200)
   } catch (err) {
@@ -23,6 +25,7 @@ const listUsers = async (event) => {
  */
 const getUser = async (event) => {
   try {
+    await authorizer.verify(event)
     const { id } = event.pathParameters
     const user = await userService.get(id)
     return response(user, 200)
@@ -38,6 +41,7 @@ const getUser = async (event) => {
  */
 const updateUser = async (event) => {
   try {
+    await authorizer.verify(event)
     const { id } = event.pathParameters
     const { name, email } = JSON.parse(event.body)
     const updatedUser = await userService.updateUser(id, { name, email })
@@ -54,6 +58,7 @@ const updateUser = async (event) => {
  */
 const deleteUser = async (event) => {
   try {
+    await authorizer.verify(event)
     const { id } = event.pathParameters
     await userService.deleteUser(id);
     return response({}, 200)
